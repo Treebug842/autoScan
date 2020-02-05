@@ -1,6 +1,6 @@
 # autoScan
 
-autoScan is made for debian based operating systems (raspberry pi OS's wont work, yet). When the script starts it will check in nmap and 
+autoScan is made for debian based operating systems (raspberry pi OS's wont work, yet). Its somewhat slow, but considering it scans all ports id give it a pass. When the script starts it will check in nmap and 
 masscan is installed, if they arnt then they will be installed. As for the basis of what it actually runs, it first performs a massscan 
 on all 65535 ports and finds the one that are open. The actually command being run is...
 ```
