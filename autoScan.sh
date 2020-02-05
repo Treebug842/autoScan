@@ -53,10 +53,9 @@ fi
 
 # Function that checks if host is up
 ip-check() {
-ping -c 1 $verify_ip > $parsing_dir/host-check.txt
+ping -c 1 $verify_ip > $parsing_dir/host-check.txt 2>/dev/null
 mapfile -t hostline < $parsing_dir/host-check.txt
 verify=$(echo ${hostline[0]} | cut -d" " -f1)
-
 if [ -z $verify ]; then
 echo "Host is down or does not exist"
 exit
