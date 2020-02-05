@@ -110,8 +110,18 @@ tun0_check=$(cat $parsing_dir/htb_tunnel.txt | grep "tun0")
 if [ $t_flag == false ]; then
 if [ ! -z $tun0_check ]; then
 interface="-e tun0 "
+ping_interface="-I tun0"
 echo -e "\e[1;34m[+] \e[0mVPN tunnel detected"
 fi
+fi
+
+# Check to make sure VPN isnt interfereing
+ping -c 1 $ping_interface $ip > $parsing_dir/ping_test.txt
+vpn_check=$(cat $parsing_dir/ping_test.txt | grep "received" | cut -d" " -f4)
+if [ $vpn_check == 0 ]; then
+echo -e "\e[0;31m[+] \e[0mUnable to connect to host!"
+echo "If you are using a VPN try using script with/without -t"
+exit
 fi
 
 # Runs the masscan
