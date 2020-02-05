@@ -47,7 +47,7 @@ fi
 
 # Checks to see if an IP was given
 if [ -z $u_flag ] && [ -z $i_flag ]; then
-echo "Invalid, please provide a target with -i or -u"
+echo "Invalid, please provide a target with -i or -u (or -h for help)"
 exit
 fi
 
