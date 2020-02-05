@@ -20,10 +20,10 @@ For convinience I suggest moving the script into the /bin directory so it can be
 autoScan [Options]
 
 - -h &nbsp; &nbsp; &nbsp; Prints out the usage guide (pretty simple) 
-- -t                  Forces scan to use default gateway (a vpn gateway will take priority) 
-- -u [URL]            Sets the ytarget to a url 
-- -i [IP Address]     Sets the target to a IP address 
-- -o [Directory]      Directory to save results (default is current dir) 
+- -t &nbsp; &nbsp; &nbsp; Forces scan to use default gateway (a vpn gateway will take priority) 
+- -u [URL] &nbsp; &nbsp; &nbsp; Sets the ytarget to a url 
+- -i [IP Address] &nbsp; &nbsp; &nbsp; Sets the target to a IP address 
+- -o [Directory] &nbsp; &nbsp; &nbsp;Directory to save results (default is current dir) 
 
   
   
