@@ -5,12 +5,12 @@ current_dir=$(pwd)
 
 # Function that prints out help details
 show_usage() {
-printf "\nUsage: autoScan [Target] [Options]\n \n "
+printf "\nUsage: autoScan [Options]\n \n "
 echo "OPTIONS:"
+echo "   -u [URL]: Set target to a URL"
+printf "   -i [IP Address]: Set target to an IP address\n \n "
 echo "   -h: Prints out usage and options"
 echo "   -o: Output directory to save files to"
-echo "   -u: Set target to a URL"
-echo "   -i: Set target to an IP address"
 printf "   -t: Forces scan to use default gateway\n \n "
 }
 
