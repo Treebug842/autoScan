@@ -134,8 +134,13 @@ current=0
 # Goes through the open ports and scans them
 while [ ! -z ${port[current]} ]; do
 echo -e "\e[0;32m[+] \e[0mOpen port discovered ${port[current]}"
-nmap -A -p${port[current]} $ip > $save_directory/port${port[current]}.txt
+nmap -A -p${port[current]} $ip > $save_directory/port${port[current]}.txt 2>/dev/null
 let current++
 done
+
+# Checks to see if any ports weer discovered
+if [ -z ${port[0]} ]; then
+echo -e "\e[0;31m[+] \e[0mNo open ports were discovered"
+fi
 
 echo -e "\e[1;34m[+] \e[0mFinished"
