@@ -23,7 +23,7 @@ autoScan [Options]
 - -t &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; Forces scan to use default gateway (a vpn gateway will take priority) 
 - -u [URL] &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; Sets the ytarget to a url 
 - -i [IP Address] &nbsp; &nbsp; &nbsp; Sets the target to a IP address 
-- -o [Directory] &nbsp; &nbsp; &nbsp; &nbsp; Directory to save results (default is current dir) 
+- -o [Directory/File] &nbsp; &nbsp; &nbsp; &nbsp; Directory to save results (default is current dir) 
 
   I also feel like the -t flag needs to be explained. What it does is force the scans to operate through the default gateway (instead of a vpn). I made this tool with Hack the Box in mind, so if you are connecte to the HTB network it will automatically use the vpn gaetway. If you specify the gateway with -t then any HTB boxes will not work (or other devices located on VPN Networks) but if you use the vpn gateway then you cannot scan things that are not apart of that network. So be mindful of which option you choose.
   
