@@ -8,7 +8,7 @@ masscan -e (Network Interface) -p0-65535 --max-rate 500 (IP Address)
 ```
 Then it automatically does a more in depth scan on each of the ports that it discovered. The command for that is...
 ```
-nmap -A -p(Port) (IP Address)
+nmap -A -p(Port) -oA (Directory/File) (IP Address)
 ```
 As you can see it is very basic, the only thing it has to offer is convinience, its much faster than typing it all, and it automatically
 converts urls to ip addresses with the -u flag (masscan dosnt like urls). 
