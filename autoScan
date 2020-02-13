@@ -8,9 +8,9 @@ show_usage() {
 printf "\nUsage: autoScan [Options]\n \n "
 echo "OPTIONS:"
 echo "   -u [URL]: Set target to a URL"
-printf "   -i [IP Address]: Set target to an IP address\n \n "
+printf "   -i [IP_Address]: Set target to an IP address\n \n "
+echo "  -o [DIR/FILE]: Output file/where to save it"
 echo "   -h: Prints out usage and options"
-echo "   -o: Output directory to save files to"
 printf "   -t: Forces scan to use default gateway\n \n "
 }
 
@@ -41,13 +41,14 @@ fi
 # Sets output directory if selected
 if [ ! -z $o_flag ]; then
 save_directory=$o_flag
+set_save_later=False
 else
-save_directory=$(pwd)
+set_save_later=True
 fi
 
 # Checks to see if an IP was given
 if [ -z $u_flag ] && [ -z $i_flag ]; then
-echo "Invalid, please provide a target with -i or -u (or -h for help)"
+echo "Invalid, must use minimum -i or -u"
 exit
 fi
 
@@ -70,6 +71,18 @@ nslookup $u_flag > $parsing_dir/nslookup.txt
 cat $parsing_dir/nslookup.txt|grep -v "192.168."|grep "Address:"|cut -d" " -f2 > $parsing_dir/nslookup_ips.txt
 mapfile -t ips <$parsing_dir/nslookup_ips.txt
 ip=${ips[0]}
+if [ $set_save_later == True ]; then
+save_directory="$current_dir/$u_flag"
+fi
+fi
+
+# check to see if nslookup worked
+if [ ! -z $u_flag ]; then
+nslookup_empty_check=$(head -n 1 $parsing_dir/nslookup_ips.txt)
+if [ -z $nslookup_empty_check ]; then
+echo -e "\e[0;31m[+] \e[0mInvalid URL!"
+exit
+fi
 fi
 
 # Sets ip if called upon
@@ -77,6 +90,9 @@ if [ ! -z $i_flag ]; then
 verify_ip=$i_flag
 ip-check
 ip=$i_flag
+if [ $set_save_later == True ]; then
+save_directory="$current_dir/$i_flag"
+fi
 fi
 
 # Check to see if nmap and masscan is installed
@@ -116,6 +132,7 @@ fi
 fi
 
 # Check to make sure VPN isnt interfereing
+if [ ! -z $tun0_check ]; then
 ping -c 1 $ping_interface $ip > $parsing_dir/ping_test.txt
 vpn_check=$(cat $parsing_dir/ping_test.txt | grep "received" | cut -d" " -f4)
 if [ $vpn_check == 0 ]; then
@@ -123,22 +140,32 @@ echo -e "\e[0;31m[+] \e[0mUnable to connect to host!"
 echo "If you are using a VPN try using script with/without -t"
 exit
 fi
+fi
 
 # Runs the masscan
 echo -e "\e[1;34m[+] \e[0mStarting Scans..."
-masscan $interface-p0-65535 --max-rate 500 $ip > $parsing_dir/masscan.txt 2>/dev/null
+masscan $interface-p0-1000 --max-rate 500 $ip > $parsing_dir/masscan.txt 2>/dev/null
 cat $parsing_dir/masscan.txt | cut -d" " -f4 | cut -d"/" -f1 > $parsing_dir/open_ports.txt
 mapfile -t port < $parsing_dir/open_ports.txt
 current=0
 
-# Goes through the open ports and scans them
+# Prints which ports are open, and makes list of them
 while [ ! -z ${port[current]} ]; do
 echo -e "\e[0;32m[+] \e[0mOpen port discovered ${port[current]}"
-nmap -A -p${port[current]} $ip > $save_directory/port${port[current]}.txt 2>/dev/null
+echo ${port[current]} >> $parsing_dir/port_list.txt
 let current++
 done
 
-# Checks to see if any ports weer discovered
+# Makes open ports into a variable
+for port_count in $(cat $parsing_dir/port_list.txt); do
+echo -n "$port_count," >> $parsing_dir/ports_to_scan.txt
+done
+nmap_ports=$(head -n 1 $parsing_dir/ports_to_scan.txt)
+
+# Scans the open ports
+nmap -A -p $nmap_ports $ip -oA $save_directory >/dev/null 2>/dev/null
+
+# Checks to see if any ports were discovered
 if [ -z ${port[0]} ]; then
 echo -e "\e[0;31m[+] \e[0mNo open ports were discovered"
 fi
