@@ -6,7 +6,7 @@ on all 65535 ports and finds the one that are open. The actually command being r
 ```
 masscan -e (Network Interface) -p0-65535 --max-rate 500 (IP Address)
 ```
-Then it automatically does a more in depth scan on each of the ports that it discovered. The command for that is...
+Then it automatically does a more in depth scan on the ports it discovered. The command for that is...
 ```
 nmap -A -p(Port) -oA (Directory/File) (IP Address)
 ```
