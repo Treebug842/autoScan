@@ -144,7 +144,7 @@ fi
 
 # Runs the masscan
 echo -e "\e[1;34m[+] \e[0mStarting Scans..."
-masscan $interface-p0-1000 --max-rate 500 $ip > $parsing_dir/masscan.txt 2>/dev/null
+masscan $interface-p0-65535 --max-rate 500 $ip > $parsing_dir/masscan.txt 2>/dev/null
 cat $parsing_dir/masscan.txt | cut -d" " -f4 | cut -d"/" -f1 > $parsing_dir/open_ports.txt
 mapfile -t port < $parsing_dir/open_ports.txt
 current=0
