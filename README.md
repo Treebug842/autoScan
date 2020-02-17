@@ -8,7 +8,7 @@ masscan -e (Network Interface) -p0-65535 --max-rate 500 (IP Address)
 ```
 Then it automatically does a more in depth scan on the ports it discovered. The command for that is...
 ```
-nmap -A -p(Port) -oA (Directory/File) (IP Address)
+nmap (-A or -sS) -p(Port) -oA (Directory/File) (IP Address)
 ```
 As you can see it is very basic, the only thing it has to offer is convinience, its much faster than typing it all, and it automatically
 converts urls to ip addresses with the -u flag (masscan dosnt like urls). 
@@ -24,6 +24,7 @@ autoScan [Options]
 - -u [URL] &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; Sets the ytarget to a url 
 - -i [IP Address] &nbsp; &nbsp; &nbsp; Sets the target to a IP address 
 - -o [Directory/File] &nbsp; &nbsp; &nbsp; &nbsp; Directory to save results (default is current dir) 
-
+- -p [PORT-PORT] &nbsp; &nbsp; &nbsp; Sets the port range to masscan
+- -s &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; Runs the nmap scan as stealth
   I also feel like the -t flag needs to be explained. What it does is force the scans to operate through the default gateway (instead of a vpn). I made this tool with Hack the Box in mind, so if you are connecte to the HTB network it will automatically use the vpn gaetway. If you specify the gateway with -t then any HTB boxes will not work (or other devices located on VPN Networks) but if you use the vpn gateway then you cannot scan things that are not apart of that network. So be mindful of which option you choose.
   
