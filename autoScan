@@ -10,7 +10,9 @@ echo "OPTIONS:"
 echo "   -u [URL]: Set target to a URL"
 printf "   -i [IP_Address]: Set target to an IP address\n \n "
 echo "  -o [DIR/FILE]: Output file/where to save it"
+echo "  -p [PORT-PORT]: Sets port range to massscan"
 echo "   -h: Prints out usage and options"
+echo "   -s: Performs a stealth scan on open ports"
 printf "   -t: Forces scan to use default gateway\n \n "
 }
 
@@ -19,16 +21,20 @@ h_flag='false'
 o_flag=''
 u_flag=''
 i_flag=''
+p_flag=''
 t_flag='false'
+s_flag='false'
 
 # Sets flag value when called upon
-while getopts 'ho:u:i:tv' flag; do
+while getopts 'ho:u:i:p:tsv' flag; do
 case "${flag}" in
 h) h_flag='true' ;;
 o) o_flag="${OPTARG}" ;;
 u) u_flag="${OPTARG}" ;;
 i) i_flag="${OPTARG}" ;;
+p) p_flag="${OPTARG}" ;;
 t) t_flag='true' ;;
+s) s_flag='true' ;;
 esac
 done
 
@@ -50,6 +56,31 @@ fi
 if [ -z $u_flag ] && [ -z $i_flag ]; then
 echo "Invalid, must use minimum -i or -u"
 exit
+fi
+
+# Check and sets s flag
+if [ $s_flag == true ]; then
+scan_type='-sS'
+else
+scan_type='-A'
+fi
+
+# Validates the p flag
+if [ ! -z $p_flag ]; then
+port_start=$(echo $p_flag | cut -d'-' -f1)
+port_stop=$(echo $p_flag | cut -d'-' -f2)
+if [ "$port_start" -gt -1 ] && [ "$port_start" -lt 65535 ]; then
+port_check1='true'
+else
+echo -e "\e[0;31m[+] \e[0mInvalid Ports Inputted"
+exit
+fi
+if [ "$port_stop" -gt 1 ] && [ "$port_stop" -lt 65536 ]; then
+port_check2='true'
+else
+echo -e "\e[0;31m[+] \e[0mInvalid Ports Inputted"
+exit
+fi
 fi
 
 # Function that checks if host is up
@@ -142,9 +173,16 @@ exit
 fi
 fi
 
+# Checks and sets the p flag
+if [ ! -z $p_flag ]; then
+masscan_ports="-p$p_flag"
+else
+masscan_ports="-p0-65535"
+fi
+
 # Runs the masscan
 echo -e "\e[1;34m[+] \e[0mStarting Scans..."
-masscan $interface-p0-65535 --max-rate 500 $ip > $parsing_dir/masscan.txt 2>/dev/null
+masscan $interface $masscan_ports --max-rate 500 $ip > $parsing_dir/masscan.txt 2>/dev/null
 cat $parsing_dir/masscan.txt | cut -d" " -f4 | cut -d"/" -f1 > $parsing_dir/open_ports.txt
 mapfile -t port < $parsing_dir/open_ports.txt
 current=0
@@ -157,13 +195,13 @@ let current++
 done
 
 # Makes open ports into a variable
-for port_count in $(cat $parsing_dir/port_list.txt); do
+for port_count in $(cat $parsing_dir/port_list.txt 2>/dev/null); do
 echo -n "$port_count," >> $parsing_dir/ports_to_scan.txt
 done
-nmap_ports=$(head -n 1 $parsing_dir/ports_to_scan.txt)
+nmap_ports=$(head -n 1 $parsing_dir/ports_to_scan.txt 2>/dev/null)
 
 # Scans the open ports
-nmap -A -p $nmap_ports $ip -oA $save_directory >/dev/null 2>/dev/null
+nmap $scan_type -p $nmap_ports $ip -oA $save_directory >/dev/null 2>/dev/null
 
 # Checks to see if any ports were discovered
 if [ -z ${port[0]} ]; then
